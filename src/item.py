@@ -1,5 +1,7 @@
 import csv
 
+from src.exceptions import InstantiateCSVError
+
 
 class Item:
     """
@@ -50,18 +52,25 @@ class Item:
         """
         Читает файл csv и берет нужные значения в класс, преобразуя строчные в числовые
         """
-        with open("../src/items.csv", encoding="windows-1251") as file:
-            file_csv = csv.DictReader(file, delimiter=",")
-            data = []
-            for i in file_csv:
-                data.append(i)
+        try:
+            with open("../src/items.csv", encoding="windows-1251") as file:
+                file_csv = csv.DictReader(file, delimiter=",")
+                data = []
+                for i in file_csv:
+                    data.append(i)
 
-        cls.all = []
-        for i in data:
-            cls(i['name'],
-                cls.string_to_number(i['price']),
-                cls.string_to_number(i['quantity'])
-                )
+        except FileNotFoundError:
+            print('Отсутствует файл item.csv')
+
+        try:
+            cls.all = []
+            for i in data:
+                cls(i['name'],
+                    cls.string_to_number(i['price']),
+                    cls.string_to_number(i['quantity'])
+                    )
+        except InstantiateCSVError as ex:
+            print(ex.message)
 
     @staticmethod
     def string_to_number(num) -> int:
@@ -85,4 +94,3 @@ class Item:
         if issubclass(other.__class__, self.__class__):
             return self.quantity + other.quantity
         raise ValueError('Ошибка наследования')
-
