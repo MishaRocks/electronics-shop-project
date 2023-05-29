@@ -47,30 +47,41 @@ class Item:
         else:
             self.__name = newname
 
+    @staticmethod
+    def get_csv(data_name):
+        try:
+            with open(data_name, encoding="windows-1251") as file:
+                file_csv = csv.DictReader(file, delimiter=",")
+        except:
+            FileNotFoundError('Отсутствует файл item.csv')
+
+            data = []
+            if file_csv is None:
+                raise FileNotFoundError('Отсутствует файл item.csv')
+            for i in file_csv:
+                data.append(i)
+            else:
+                return data
+
     @classmethod
     def instantiate_from_csv(cls):
         """
         Читает файл csv и берет нужные значения в класс, преобразуя строчные в числовые
         """
-        try:
-            with open("../src/items.csv", encoding="windows-1251") as file:
-                file_csv = csv.DictReader(file, delimiter=",")
-                data = []
-                for i in file_csv:
-                    data.append(i)
+        data_name = '../src/items.csv'
+        data = cls.get_csv(data_name)
 
-        except FileNotFoundError:
-            print('Отсутствует файл item.csv')
-
-        try:
-            cls.all = []
-            for i in data:
+        cls.all = []
+        if data is None:
+            raise FileNotFoundError('Отсутствует файл item.csv')
+        for i in data:
+            try:
                 cls(i['name'],
                     cls.string_to_number(i['price']),
                     cls.string_to_number(i['quantity'])
                     )
-        except InstantiateCSVError as ex:
-            print(ex.message)
+            except:
+                InstantiateCSVError('Файл item.csv поврежден')
 
     @staticmethod
     def string_to_number(num) -> int:

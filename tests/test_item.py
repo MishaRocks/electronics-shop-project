@@ -42,3 +42,6 @@ def test__str__(test_hm_1):
 def test__add__(test_hm_1, test_hm_2):
     assert test_hm_1 + test_hm_2 == 25
 
+
+def test_file_not_found_exception():
+    assert Item.get_csv('file.txt') == 'Отсутствует файл item.csv'
