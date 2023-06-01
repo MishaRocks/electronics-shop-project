@@ -44,4 +44,4 @@ def test__add__(test_hm_1, test_hm_2):
 
 
 def test_file_not_found_exception():
-    assert Item.instantiate_from_csv('file.txt') is None
+    assert Item.instantiate_from_csv('../src/items.csv') is None
