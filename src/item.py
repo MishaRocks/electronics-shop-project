@@ -47,41 +47,30 @@ class Item:
         else:
             self.__name = newname
 
-    @staticmethod
-    def get_csv(data_name):
-        try:
-            with open(data_name, encoding="windows-1251") as file:
-                file_csv = csv.DictReader(file, delimiter=",")
-        except:
-            FileNotFoundError('Отсутствует файл item.csv')
-
-            data = []
-            if file_csv is None:
-                raise FileNotFoundError('Отсутствует файл item.csv')
-            for i in file_csv:
-                data.append(i)
-            else:
-                return data
-
     @classmethod
-    def instantiate_from_csv(cls):
+    def instantiate_from_csv(cls, data_name='../src/items.csv'):
         """
         Читает файл csv и берет нужные значения в класс, преобразуя строчные в числовые
         """
-        data_name = '../src/items.csv'
-        data = cls.get_csv(data_name)
+        try:
+            with open(data_name, encoding="windows-1251") as file:
+                file_csv = csv.DictReader(file, delimiter=",")
+            data = []
+            for i in file_csv:
+                data.append(i)
 
-        cls.all = []
-        if data is None:
-            raise FileNotFoundError('Отсутствует файл item.csv')
-        for i in data:
-            try:
-                cls(i['name'],
-                    cls.string_to_number(i['price']),
-                    cls.string_to_number(i['quantity'])
-                    )
-            except:
-                InstantiateCSVError('Файл item.csv поврежден')
+            cls.all = []
+
+            for i in data:
+                try:
+                    cls(i['name'],
+                        cls.string_to_number(i['price']),
+                        cls.string_to_number(i['quantity'])
+                        )
+                except:
+                    InstantiateCSVError(print('Файл item.csv поврежден'))
+        except:
+            FileNotFoundError(print('Отсутствует файл item.csv'))
 
     @staticmethod
     def string_to_number(num) -> int:
